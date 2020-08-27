@@ -10,23 +10,24 @@ function usd(thisAmount) {
 
 
 function statement(invoice, plays) {
+  return printStatementTxt(invoice, plays);
+}
 
-  let result = `Statement for ${invoice.customer}\n`;
 
+function printStatementTxt(invoice, plays) {
   let volumeCredits = 0;
+  let totalAmount = getTotalAmount(invoice, plays);
+  let result = `Statement for ${invoice.customer}\n`;
   for (let performance of invoice.performances) {
     const play = plays[performance.playID];
     let thisAmount = getThisAmount(play, performance);
     volumeCredits = getVolumeCredits(volumeCredits, performance, play);
     result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience} seats)\n`;
-
   }
-  let totalAmount = getTotalAmount(invoice, plays);
   result += `Amount owed is ${usd(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
 }
-
 
 function getTotalAmount(invoice, plays) {
   let totalAmount = 0;
