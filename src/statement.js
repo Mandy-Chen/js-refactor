@@ -4,15 +4,15 @@ function usd(thisAmount) {
     currency: 'USD',
     minimumFractionDigits: 2,
   }).format;
-  const result =format((thisAmount/100));
-  return  result;
+  const result = format((thisAmount / 100));
+  return result;
 }
 
 
-function statement (invoice, plays) {
+function statement(invoice, plays) {
 
   let result = `Statement for ${invoice.customer}\n`;
-  
+
   let volumeCredits = 0;
   for (let performance of invoice.performances) {
     const play = plays[performance.playID];
@@ -21,14 +21,14 @@ function statement (invoice, plays) {
     result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience} seats)\n`;
 
   }
-  let totalAmount = getTotalAmount(invoice ,plays);
+  let totalAmount = getTotalAmount(invoice, plays);
   result += `Amount owed is ${usd(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
 }
 
 
-function getTotalAmount(invoice,plays){
+function getTotalAmount(invoice, plays) {
   let totalAmount = 0;
   for (let performance of invoice.performances) {
     const play = plays[performance.playID];
@@ -44,21 +44,14 @@ function getVolumeCredits(volumeCredits, performance, play) {
   return volumeCredits;
 }
 
-function getThisAmount(play,  perf) {
-let thisAmount=0;
+function getThisAmount(play, perf) {
+  let thisAmount = 0;
   switch (play.type) {
     case 'tragedy':
-      thisAmount = 40000;
-      if (perf.audience > 30) {
-        thisAmount += 1000 * (perf.audience - 30);
-      }
+      thisAmount = getTragedyThisAmount(perf);
       break;
     case 'comedy':
-      thisAmount = 30000;
-      if (perf.audience > 20) {
-        thisAmount += 10000 + 500 * (perf.audience - 20);
-      }
-      thisAmount += 300 * perf.audience;
+      thisAmount = getComedyThisAmount(perf);
       break;
     default:
       throw new Error(`unknown type: ${play.type}`);
@@ -69,3 +62,20 @@ let thisAmount=0;
 module.exports = {
   statement,
 };
+
+function getComedyThisAmount(perf) {
+  let thisAmount = 30000;
+  if (perf.audience > 20) {
+    thisAmount += 10000 + 500 * (perf.audience - 20);
+  }
+  thisAmount += 300 * perf.audience;
+  return thisAmount;
+}
+
+function getTragedyThisAmount(perf) {
+  let thisAmount = 40000;
+  if (perf.audience > 30) {
+    thisAmount += 1000 * (perf.audience - 30);
+  }
+  return thisAmount;
+}
