@@ -14,13 +14,13 @@ function statement (invoice, plays) {
   let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
 
-  for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
+  for (let performance of invoice.performances) {
+    const play = plays[performance.playID];
     let thisAmount = 0;
-    thisAmount = getThisAmount(play, thisAmount, perf);
-    volumeCredits += Math.max(perf.audience - 30, 0);
-    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
-    result += ` ${play.name}: ${usd(thisAmount)} (${perf.audience} seats)\n`;
+    thisAmount = getThisAmount(play, thisAmount, performance);
+    volumeCredits += Math.max(performance.audience - 30, 0);
+    if ('comedy' === play.type) volumeCredits += Math.floor(performance.audience / 5);
+    result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience} seats)\n`;
     totalAmount += thisAmount;
   }
   result += `Amount owed is ${usd(totalAmount)}\n`;
