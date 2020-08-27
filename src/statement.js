@@ -10,32 +10,42 @@ function usd(thisAmount) {
 
 
 function statement (invoice, plays) {
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
 
+  let result = `Statement for ${invoice.customer}\n`;
+  
+  let volumeCredits = 0;
   for (let performance of invoice.performances) {
     const play = plays[performance.playID];
-    let thisAmount = 0;
-    thisAmount = getThisAmount(play, thisAmount, performance);
-    volumeCredits = getTotalAmount(volumeCredits, performance, play);
+    let thisAmount = getThisAmount(play, performance);
+    volumeCredits = getVolumeCredits(volumeCredits, performance, play);
     result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience} seats)\n`;
-    totalAmount += thisAmount;
+
   }
+  let totalAmount = getTotalAmount(invoice ,plays);
   result += `Amount owed is ${usd(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
 }
 
 
-function getTotalAmount(volumeCredits, performance, play) {
+function getTotalAmount(invoice,plays){
+  let totalAmount = 0;
+  for (let performance of invoice.performances) {
+    const play = plays[performance.playID];
+    totalAmount += getThisAmount(play, performance);
+  }
+  return totalAmount;
+}
+
+function getVolumeCredits(volumeCredits, performance, play) {
   volumeCredits += Math.max(performance.audience - 30, 0);
   if ('comedy' === play.type)
     volumeCredits += Math.floor(performance.audience / 5);
   return volumeCredits;
 }
 
-function getThisAmount(play, thisAmount, perf) {
+function getThisAmount(play,  perf) {
+let thisAmount=0;
   switch (play.type) {
     case 'tragedy':
       thisAmount = 40000;
