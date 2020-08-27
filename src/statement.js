@@ -18,8 +18,7 @@ function statement (invoice, plays) {
     const play = plays[performance.playID];
     let thisAmount = 0;
     thisAmount = getThisAmount(play, thisAmount, performance);
-    volumeCredits += Math.max(performance.audience - 30, 0);
-    if ('comedy' === play.type) volumeCredits += Math.floor(performance.audience / 5);
+    volumeCredits = getTotalAmount(volumeCredits, performance, play);
     result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience} seats)\n`;
     totalAmount += thisAmount;
   }
@@ -28,6 +27,13 @@ function statement (invoice, plays) {
   return result;
 }
 
+
+function getTotalAmount(volumeCredits, performance, play) {
+  volumeCredits += Math.max(performance.audience - 30, 0);
+  if ('comedy' === play.type)
+    volumeCredits += Math.floor(performance.audience / 5);
+  return volumeCredits;
+}
 
 function getThisAmount(play, thisAmount, perf) {
   switch (play.type) {
